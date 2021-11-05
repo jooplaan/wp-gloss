@@ -31,6 +31,13 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 				'init',
 				array( $this, 'wp_gloss_register_custom_post_type' )
 			);
+
+			// Add taxonomy for glossary term post type.
+			add_action(
+				'init',
+				array( $this, 'create_wp_gloss_hierarchical_taxonomy' )
+			);
+
 		}
 
 		/**
@@ -83,6 +90,41 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 				)
 			);
 		}
+
+
+		/**
+		 * Registers a category for Glossary Terms post type.
+		 */
+		public function create_wp_gloss_hierarchical_taxonomy() {
+			$labels = array(
+				'name' => _x( 'Glossary categories', 'taxonomy general name', 'wp-gloss' ),
+				'singular_name' => _x( 'Glossary category', 'taxonomy singular name', 'wp-gloss' ),
+				'search_items' => __( 'Search Glossary categories', 'wp-gloss' ),
+				'all_items' => __( 'All Glossary categories', 'wp-gloss' ),
+				'parent_item' => __( 'Parent Glossary category', 'wp-gloss' ),
+				'parent_item_colon' => __( 'Parent Glossary category:', 'wp-gloss' ),
+				'edit_item' => __( 'Edit Glossary category', 'wp-gloss' ),
+				'update_item' => __( 'Update Glossary category', 'wp-gloss' ),
+				'add_new_item' => __( 'Add New Glossary category', 'wp-gloss' ),
+				'new_item_name' => __( 'New Glossary category Name', 'wp-gloss' ),
+				'menu_name' => __( 'Glossary categories', 'wp-gloss' ),
+			);
+
+			// Now register the taxonomy.
+			register_taxonomy(
+				'category-glossary',
+				array( 'glossary-term' ),
+				array(
+					'hierarchical' => true,
+					'labels' => $labels,
+					'show_ui' => true,
+					'show_admin_column' => true,
+					'query_var' => true,
+					'rewrite' => array( 'slug' => 'glossary-terms' ),
+				)
+			);
+		}
+
 	}
 	$get_glossary = new Wp_Gloss_Custom_Post_Type_Glossary_Term();
 }
