@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the core plugin class
  *
@@ -110,6 +109,16 @@ class Wp_Gloss {
 		 * of the plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-gloss-i18n.php';
+
+		/**
+		 * The class responsible for defining Custom Post Type Glossarium.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-gloss-custom-post-type-glossary-term.php';
+
+		/**
+		 * The class responsible for defining meta boxes for custom Post Type Glossarium.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-gloss-meta-boxes.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
