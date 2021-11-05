@@ -59,17 +59,56 @@ if ( ! class_exists( 'Wp_Gloss_Meta_Boxes' ) ) {
 
 			$meta = get_post_custom( $post->ID );
 			$wp_gloss_synonym = ! isset( $meta['wp-gloss-synonym'][0] ) ? '' : $meta['wp-gloss-synonym'][0];
+			$wp_gloss_sensitivity = ! isset( $meta['wp-gloss-sensitivity'][0] ) ? 0 : $meta['wp-gloss-sensitivity'][0];
 
 			wp_nonce_field( basename( __FILE__ ), 'glossary-term-meta-nonce' ); ?>
 
-			<table class="form-table">
-
+			<table class="form-table form-table-wp-gloss-admin" role="presentation">
 				<tr>
 					<td class="team_meta_box_td" colspan="2">
-						<label for="wp-gloss-synonym"><?php esc_html_e( 'Synonym', 'wp-gloss' ); ?></label>
+						<label for="wp-gloss-synonym"><?php esc_html_e( 'Synonyms', 'wp-gloss' ); ?></label>
 					</td>
 					<td colspan="4">
 						<input type="text" name="wp-gloss-synonym" class="regular-text" value="<?php echo esc_html( $wp_gloss_synonym ); ?>">
+						<p><small>Seperate multiple synonyms with a comma.</small></p>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="team_meta_box_td" colspan="2">
+						<label for="wp-gloss-sensitivity"><?php esc_html_e( 'Sensitivity', 'wp-gloss' ); ?></label>
+					</td>
+					<td colspan="4">
+						<select name="wp-gloss-sensitivity">
+							<option value="0"
+								<?php
+								if ( '0' == $wp_gloss_sensitivity ) {
+									echo ' selected';
+								}
+								?>
+							><?php esc_html_e( 'Neutral', 'wp-gloss' ); ?></option>
+							<option value="1"
+								<?php
+								if ( '1' == $wp_gloss_sensitivity ) {
+									echo ' selected';
+								}
+								?>
+							><?php esc_html_e( 'Preferred term', 'wp-gloss' ); ?></option>
+							<option value="2"
+								<?php
+								if ( '2' == $wp_gloss_sensitivity ) {
+									echo ' selected';
+								}
+								?>
+							><?php esc_html_e( 'Do not use', 'wp-gloss' ); ?></option>
+							<option value="3"
+								<?php
+								if ( '3' == $wp_gloss_sensitivity ) {
+									echo ' selected';
+								}
+								?>
+							><?php esc_html_e( 'Disputed term', 'wp-gloss' ); ?></option>
+						</select>
 					</td>
 				</tr>
 			</table>
@@ -112,6 +151,7 @@ if ( ! class_exists( 'Wp_Gloss_Meta_Boxes' ) ) {
 			}
 
 			$meta['wp-gloss-synonym'] = ( isset( $_POST['wp-gloss-synonym'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-synonym'] ) ) : '' );
+			$meta['wp-gloss-sensitivity'] = ( isset( $_POST['wp-gloss-sensitivity'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-sensitivity'] ) ) : '' );
 			foreach ( $meta as $key => $value ) {
 				update_post_meta( $post_id, $key, $value );
 			}

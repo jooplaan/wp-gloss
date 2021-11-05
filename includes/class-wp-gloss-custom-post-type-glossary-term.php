@@ -38,6 +38,22 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 				array( $this, 'create_wp_gloss_hierarchical_taxonomy' )
 			);
 
+			// Add Glossary Terms to WP search.
+			add_filter(
+				'pre_get_posts',
+				array( $this, 'wp_gloss_search' )
+			);
+		}
+
+
+		/**
+		 * Add Glossary Terms to WP search.
+		 */
+		public function wp_gloss_search() {
+			if ( $query->is_search ) {
+				$query->set( 'post_type', array( 'post', 'glossary', 'page' ) );
+			};
+			return $query;
 		}
 
 		/**
@@ -82,10 +98,8 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 						'editor',
 						'excerpt',
 						'thumbnail',
-						// Line below makes wp-gloss available to
-						// Gutenberg/Block editor.
-						'show_in_rest' => true,
 					),
+					'show_in_rest' => true,
 					'taxonomies' => array( 'category-glossary' ),
 				)
 			);

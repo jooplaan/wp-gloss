@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fired during plugin activation
  *
@@ -23,14 +22,13 @@
 class Wp_Gloss_Activator {
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
+	 * Run when plugin is activated.
 	 *
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+		// Flush the cache on plugin activation.
+		flush_rewrite_rules();
 	}
 
 }
