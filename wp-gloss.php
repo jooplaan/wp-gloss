@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin bootstrap file
  *
@@ -15,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name:       Glossarium
  * Plugin URI:        https://github.com/jooplaan/wp-gloss
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Build a glossary with preferred and non-preferred terms in a specialized field of knowledge.
  * Version:           1.0.0
  * Author:            Joop Laan
  * Author URI:        https://www.jooplaan.com/
