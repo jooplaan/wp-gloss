@@ -51,7 +51,7 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 		 */
 		public function wp_gloss_search() {
 			if ( $query->is_search ) {
-				$query->set( 'post_type', array( 'post', 'glossary', 'page' ) );
+				$query->set( 'post_type', array( 'post', 'glossary-term', 'page' ) );
 			};
 			return $query;
 		}
@@ -99,7 +99,7 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 						'excerpt',
 						'thumbnail',
 					),
-					'show_in_rest' => true,
+					'show_in_rest' => false,
 					'taxonomies' => array( 'category-glossary' ),
 				)
 			);
