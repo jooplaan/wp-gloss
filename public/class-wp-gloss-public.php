@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -44,14 +43,36 @@ class Wp_Gloss_Public {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param string $plugin_name       The name of the plugin.
+	 * @param string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
+	}
+
+	/**
+	 * Main method to add the tooltips to the content.
+	 *
+	 * @since    1.0.0
+	 * @param string $content       The post content.
+	 */
+	public function add_tooltips_to_content( $content ) {
+		if ( ( is_singular() ) && ( is_main_query() ) ) {
+			$string = $content;
+			$word = 'trainman';
+			$link = 'https://awintranet.local/glossary/autism/';
+			$id = 399;
+			$tooltip_text = 'Autism, or autism spectrum disorder (ASD), refers to a broad range of conditions characterized by challenges with social skills, repetitive behaviors, speech, and non-speaking communication.';
+			$pattern = '#' . $word . '#s';
+
+			$replacement = '<a href="' . $link . '" aria-labelledby="tip-' . $id . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
+			$replacement .= $word . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $id . '">' . $tooltip_text . '</span></a>';
+			$content = preg_replace( $pattern, $replacement, $string );
+		}
+		return $content;
 	}
 
 	/**
