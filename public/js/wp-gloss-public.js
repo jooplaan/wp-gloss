@@ -1,32 +1,83 @@
 (function( $ ) {
 	'use strict';
 
+	// Settings:
+	// Timeout to hide tooltip
+	var TIMEOUT_LENGTH = 200;
+	// global timeout map; quick n dirty
+	var timeouts = new WeakMap();
+
+	// here we attach all event listeners to control the tooltip
+	function initTooltip(tooltipContainer) {
+		var trigger = $('.wp-gloss-tooltip-trigger');
+		var tooltip = $('.wp-gloss-tooltip');
+
+		// Show tooltip on hover and focus.
+		tooltipContainer.bind('mouseenter', function () {
+			showTooltip(tooltip);
+		});
+		trigger.bind('focus', function () {
+			showTooltip(tooltip);
+		});
+
+		// Hide tooltip on mouse out and blur
+		// use timeout on mouse leave.
+		tooltipContainer.bind('mouseleave', function () {
+			timeoutTooltip(tooltip);
+		});
+		trigger.bind('blur', function () {
+			hideTooltip(tooltip);
+		});
+
+		// Hide the tooltip on escape key press.
+		$(document).on(
+			'keydown',
+			function(event) {
+				if(event.key == "Escape") {
+					hideTooltip(tooltip);
+				}
+			}
+		);
+	}
+
+	function showTooltip(tooltip) {
+		$(tooltip).css('display','block');
+		$(tooltip).attr("aria-hidden", "false");
+		// If a hide timeout exists for this tooltip, clear it.
+		if (timeouts.has(tooltip)) {
+			window.clearTimeout(timeouts.get(tooltip));
+		}
+	}
+
+	function hideTooltip(tooltip) {
+		$(tooltip).css('display','none');
+		$(tooltip).attr("aria-hidden", "true");
+	}
+
+	function timeoutTooltip(tooltip) {
+		// Hide the tooltip after a set amount of time.
+		var timeoutId = window.setTimeout(function () {
+			hideTooltip(tooltip);
+		}, TIMEOUT_LENGTH);
+		// Store the timeout so it can be cleared.
+		timeouts.set(tooltip, timeoutId);
+	}
+
 	/**
-	 * All of the code for your public-facing JavaScript source
-	 * should reside in this file.
 	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
+	 * DOM ready
 	 */
+	$(function() {
+		// initiate tooltips
+		$('.wp-gloss-tooltip-wrapper').each (function (tooltip) {
+			initTooltip($(this));
+		});
+
+	});
 
 })( jQuery );
+
+
+
+
+
