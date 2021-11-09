@@ -79,7 +79,7 @@ class Wp_Gloss_Public {
 					$pattern,
 					function( $match ) {
 						$replacement = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
-						$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '">' . $this->term['excerpt'] . '</span></a>';
+						$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
 						return $replacement;
 					},
 					$content,
@@ -142,32 +142,30 @@ class Wp_Gloss_Public {
 	 * @since 0.1.0
 	 */
 	private function get_ordered_term_list() {
-		$ordered_arr = array();
+		$terms_arr = array();
+		$synonyms_arr = array();
 		$terms = $this->get_glossary_terms();
 		if ( count( $terms ) > 0 ) {
 			foreach ( $terms as $term ) {
-				$ordered_synonyms_arr = array();
 				$term_key = trim( $term['term'] );
 				$id = $term['id'];
-
-				$ordered_arr[ $term_key ]['id'] = $id;
-				$ordered_arr[ $term_key ]['term'] = $term_key;
-				$ordered_arr[ $term_key ]['link'] = $term['link'];
-				$ordered_arr[ $term_key ]['excerpt'] = $term['excerpt'];
-				$text_syonyms = get_post_meta( $id, 'wp-gloss-synonym', true );
-				if ( null !== $term['syonyms'] ) {
-					$synonyms = explode( ',', $term['syonyms'] );
-					foreach ( $synonyms as $synonym ) {
-						$ordered_synonyms_arr[ $trimmed_synonym ]['id'] = $id;
-						$ordered_synonyms_arr[ $trimmed_synonym ]['term'] = trim( $synonym );
-						$ordered_synonyms_arr[ $trimmed_synonym ]['link'] = $term['link'];
-						$ordered_synonyms_arr[ $trimmed_synonym ]['excerpt'] = $term['excerpt'];
+				$terms_arr[ $term_key ]['id'] = $id;
+				$terms_arr[ $term_key ]['term'] = $term_key;
+				$terms_arr[ $term_key ]['link'] = $term['link'];
+				$terms_arr[ $term_key ]['excerpt'] = $term['excerpt'];
+				$terms_arr[ $term_key ]['syonyms'] = $term['syonyms'];
+				// Get the synonyms to.
+				if ( count( $term['syonyms'] ) > 0 ) {
+					foreach ( $term['syonyms'] as $synonym ) {
+						$synonyms_arr[ $synonym ]['id'] = $id;
+						$synonyms_arr[ $synonym ]['term'] = $term_key;
+						$synonyms_arr[ $synonym ]['link'] = $term['link'];
+						$synonyms_arr[ $synonym ]['excerpt'] = $term['excerpt'];
 					}
 				}
 			}
-			return array_merge( $ordered_arr, $ordered_synonyms_arr );
 		}
-		return $ordered_arr;
+		return array_merge( $terms_arr, $synonyms_arr );
 	}
 
 	/**
@@ -181,15 +179,22 @@ class Wp_Gloss_Public {
 		// Set up query.
 		$args = array(
 			'post_type' => 'glossary-term',
+			'posts_per_page' => -1,
 		);
 		$query = new WP_Query( $args );
 		$posts = $query->posts;
 		foreach ( $posts as $key => $post ) {
 			$id = $post->ID;
+			$syonyms = array();
+			$text_syonyms = get_post_meta( $id, 'wp-gloss-synonym', true );
+			if ( ! empty( $text_syonyms ) ) {
+				$syonyms = array_map( 'trim', explode( ',', $text_syonyms ) );
+			}
 			$terms[ $id ]['id'] = $id;
 			$terms[ $id ]['term'] = $post->post_title;
 			$terms[ $id ]['link'] = get_the_permalink( $post );
 			$terms[ $id ]['excerpt'] = $post->post_excerpt;
+			$terms[ $id ]['syonyms'] = $syonyms;
 		}
 		/* Restore original Post Data */
 		wp_reset_postdata();
