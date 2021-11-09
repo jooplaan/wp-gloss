@@ -43,6 +43,13 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 				'pre_get_posts',
 				array( $this, 'wp_gloss_search' )
 			);
+
+			// Add template file for glossary term post type.
+			add_filter(
+				'template_include',
+				array( $this, 'include_template_function' )
+			);
+
 		}
 
 
@@ -137,6 +144,33 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 					'rewrite' => array( 'slug' => 'glossary-terms' ),
 				)
 			);
+		}
+
+		/**
+		 * Add template files for Glossary Term type single and listings.
+		 *
+		 * @param string $template_path  The template pathe.
+		 */
+		public function include_template_function( $template_path ) {
+			if ( get_post_type() == 'glossary-term' ) {
+				if ( is_single() ) {
+					// Checks if the file exists in the theme first,
+					// otherwise serve the file from the plugin.
+					if ( $theme_file = locate_template( array( 'single-glossary-term.php' ) ) ) {
+						$template_path = $theme_file;
+					} else {
+						$template_path = WP_GLOSS_PLUGIN_PATH . 'public/single-glossary-term.php';
+					}
+				} elseif ( ! is_search() ) {
+					// Listing page.
+					if ( $theme_file = locate_template( array( 'archive-glossary-term.php' ) ) ) {
+						$template_path = $theme_file;
+					} else {
+						$template_path = WP_GLOSS_PLUGIN_PATH . 'public/archive-glossary-term.php';
+					}
+				}
+			}
+			return $template_path;
 		}
 
 	}
