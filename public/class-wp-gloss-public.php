@@ -75,12 +75,11 @@ class Wp_Gloss_Public {
 			foreach ( $terms as $key => $term ) {
 				$this->term = $term;
 				$pattern = "/\b$key\b/i";
-				$id = $term['id'];
 				$content = preg_replace_callback(
 					$pattern,
-					function( $matches ) {
+					function( $match ) {
 						$replacement = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
-						$replacement .= $matches[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->$term['id'] . '">' . $this->term['excerpt'] . '</span></a>';
+						$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '">' . $this->term['excerpt'] . '</span></a>';
 						return $replacement;
 					},
 					$content,
