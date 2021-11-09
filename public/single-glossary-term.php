@@ -97,22 +97,60 @@ get_header();
 						the_content( __( 'Continue reading', 'wp-gloss' ) );
 					}
 					?>
+
+					<h2 class="entry-title heading-size-4"><?php esc_html_e( 'Meta', 'wp-gloss' ); ?></h2>
 					<?php
 					// Display custom fields.
+					$sensitivity_arr = get_post_meta( get_the_ID(), 'wp-gloss-sensitivity', true );
+					switch ( $sensitivity_arr[0] ) {
+						case 1:
+							$sensitivity = __( 'Neutral', 'wp-gloss' );
+							break;
+						case 2:
+							$sensitivity = __( 'Sensitive term', 'wp-gloss' );
+							break;
+						case 3:
+							$sensitivity = __( 'Do not use', 'wp-gloss' );
+							break;
+						default:
+							$sensitivity = __( 'Neutral', 'wp-gloss' );
+					}
+					?>
+					<p><?php esc_html_e( 'Sensitivity', 'wp-gloss' ); ?>: <?php echo esc_html( $sensitivity ); ?></p>
+					<?php
+					// Display Preferred Term.
+					$preferred_term_arr = get_post_meta( get_the_ID(), 'wp-gloss-term-preferred', true );
+					if ( 0 == $preferred_term_arr ) {
+						$preferred_term = __( 'None', 'wp-gloss' );
+					} elseif ( get_the_ID() == $preferred_term_arr ) {
+						$preferred_term = get_the_title();
+					} else {
+						$preferred_term = '<a href="' . esc_attr( esc_url( get_page_link( $preferred_term_arr ) ) ) . '">';
+						$preferred_term .= get_the_title( $preferred_term_arr ) . '</a>';
+					}
+					?>
+					<p><?php esc_html_e( 'Preferred term', 'wp-gloss' ); ?>: <?php echo wp_kses( $preferred_term, array( 'a' => array( 'href' => array() ) ) ); ?></p>
+					<?php
+					// Display Non Preferred Term.
+					$non_preferred_term_arr = get_post_meta( get_the_ID(), 'wp-gloss-term-non-preferred', true );
+					if ( 0 == $non_preferred_term_arr ) {
+						$non_preferred_term = __( 'None', 'wp-gloss' );
+					} elseif ( get_the_ID() == $non_preferred_term_arr ) {
+						$non_preferred_term = get_the_title();
+					} else {
+						$non_preferred_term = '<a href="' . esc_attr( esc_url( get_page_link( $non_preferred_term_arr ) ) ) . '">';
+						$non_preferred_term .= get_the_title( $non_preferred_term_arr ) . '</a>';
+					}
+					?>
+					<p><?php esc_html_e( 'Non preferred term', 'wp-gloss' ); ?>: <?php echo wp_kses( $non_preferred_term, array( 'a' => array( 'href' => array() ) ) ); ?></p>
+
+
+					<?php
+					// Display synonyms.
 					$text_syonyms = get_post_meta( get_the_ID(), 'wp-gloss-synonym', true );
 					if ( $text_syonyms ) {
-						$synonyms = explode( ',', $text_syonyms );
 						?>
-						<h2 class="entry-title heading-size-4"><?php esc_html_e( 'Synonyms', 'wp-gloss' ); ?></h2>
-						<ul>
-							<?php
-							foreach ( $synonyms as $synonym ) {
-								?>
-								<li><?php echo esc_html( trim( $synonym ) ); ?></li>
-								<?php
-							}
-							?>
-						</ul>
+						<p><?php esc_html_e( 'Synonyms', 'wp-gloss' ); ?>: <?php echo esc_html( $text_syonyms ); ?></p>
 						<?php
 					}
 					?>
