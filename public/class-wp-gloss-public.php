@@ -40,6 +40,15 @@ class Wp_Gloss_Public {
 	private $version;
 
 	/**
+	 * The term.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $term    The current tern.
+	 */
+	private $term;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -50,7 +59,7 @@ class Wp_Gloss_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
+		$this->term = '';
 	}
 
 	/**
@@ -61,16 +70,23 @@ class Wp_Gloss_Public {
 	 */
 	public function add_tooltips_to_content( $content ) {
 		if ( ( is_singular() ) && ( is_main_query() ) ) {
-			$string = $content;
-			$word = 'trainman';
-			$link = 'https://awintranet.local/glossary/autism/';
-			$id = 399;
-			$tooltip_text = 'Autism, or autism spectrum disorder (ASD), refers to a broad range of conditions characterized by challenges with social skills, repetitive behaviors, speech, and non-speaking communication.';
-			$pattern = '#' . $word . '#s';
+			$terms = $this->get_ordered_term_list();
 
-			$replacement = '<a href="' . $link . '" aria-labelledby="tip-' . $id . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
-			$replacement .= $word . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $id . '">' . $tooltip_text . '</span></a>';
-			$content = preg_replace( $pattern, $replacement, $string );
+			foreach ( $terms as $key => $term ) {
+				$this->term = $term;
+				$pattern = "/\b$key\b/i";
+				$id = $term['id'];
+				$content = preg_replace_callback(
+					$pattern,
+					function( $matches ) {
+						$replacement = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
+						$replacement .= $matches[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->$term['id'] . '">' . $this->term['excerpt'] . '</span></a>';
+						return $replacement;
+					},
+					$content,
+					1
+				);
+			}
 		}
 		return $content;
 	}
@@ -121,4 +137,64 @@ class Wp_Gloss_Public {
 
 	}
 
+	/**
+	 * Get ordered term list.
+	 *
+	 * @since 0.1.0
+	 */
+	private function get_ordered_term_list() {
+		$ordered_arr = array();
+		$terms = $this->get_glossary_terms();
+		if ( count( $terms ) > 0 ) {
+			foreach ( $terms as $term ) {
+				$ordered_synonyms_arr = array();
+				$term_key = trim( $term['term'] );
+				$id = $term['id'];
+
+				$ordered_arr[ $term_key ]['id'] = $id;
+				$ordered_arr[ $term_key ]['term'] = $term_key;
+				$ordered_arr[ $term_key ]['link'] = $term['link'];
+				$ordered_arr[ $term_key ]['excerpt'] = $term['excerpt'];
+				$text_syonyms = get_post_meta( $id, 'wp-gloss-synonym', true );
+				if ( null !== $term['syonyms'] ) {
+					$synonyms = explode( ',', $term['syonyms'] );
+					foreach ( $synonyms as $synonym ) {
+						$ordered_synonyms_arr[ $trimmed_synonym ]['id'] = $id;
+						$ordered_synonyms_arr[ $trimmed_synonym ]['term'] = trim( $synonym );
+						$ordered_synonyms_arr[ $trimmed_synonym ]['link'] = $term['link'];
+						$ordered_synonyms_arr[ $trimmed_synonym ]['excerpt'] = $term['excerpt'];
+					}
+				}
+			}
+			return array_merge( $ordered_arr, $ordered_synonyms_arr );
+		}
+		return $ordered_arr;
+	}
+
+	/**
+	 * Get Glossary posts.
+	 *
+	 * @since 0.1.0
+	 */
+	private function get_glossary_terms() {
+		$terms = array();
+
+		// Set up query.
+		$args = array(
+			'post_type' => 'glossary-term',
+		);
+		$query = new WP_Query( $args );
+		$posts = $query->posts;
+		foreach ( $posts as $key => $post ) {
+			$id = $post->ID;
+			$terms[ $id ]['id'] = $id;
+			$terms[ $id ]['term'] = $post->post_title;
+			$terms[ $id ]['link'] = get_the_permalink( $post );
+			$terms[ $id ]['excerpt'] = $post->post_excerpt;
+		}
+		/* Restore original Post Data */
+		wp_reset_postdata();
+
+		return $terms;
+	}
 }
