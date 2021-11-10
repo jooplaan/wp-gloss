@@ -147,9 +147,9 @@ class Wp_Gloss_Public {
 		$terms = $this->get_glossary_terms();
 		if ( count( $terms ) > 0 ) {
 			foreach ( $terms as $term ) {
-				$term_key = trim( $term['term'] );
-				$id = $term['id'];
-				$terms_arr[ $term_key ]['id'] = $id;
+				$term_key = $term['term'];
+				$id = mt_getrandmax();
+				$terms_arr[ $term_key ]['id'] = mt_getrandmax();
 				$terms_arr[ $term_key ]['term'] = $term_key;
 				$terms_arr[ $term_key ]['link'] = $term['link'];
 				$terms_arr[ $term_key ]['excerpt'] = $term['excerpt'];
@@ -157,7 +157,7 @@ class Wp_Gloss_Public {
 				// Get the synonyms to.
 				if ( count( $term['syonyms'] ) > 0 ) {
 					foreach ( $term['syonyms'] as $synonym ) {
-						$synonyms_arr[ $synonym ]['id'] = $id;
+						$synonyms_arr[ $synonym ]['id'] = mt_getrandmax();
 						$synonyms_arr[ $synonym ]['term'] = $term_key;
 						$synonyms_arr[ $synonym ]['link'] = $term['link'];
 						$synonyms_arr[ $synonym ]['excerpt'] = $term['excerpt'];
@@ -191,7 +191,7 @@ class Wp_Gloss_Public {
 				$syonyms = array_map( 'trim', explode( ',', $text_syonyms ) );
 			}
 			$terms[ $id ]['id'] = $id;
-			$terms[ $id ]['term'] = $post->post_title;
+			$terms[ $id ]['term'] = trim( $post->post_title );
 			$terms[ $id ]['link'] = get_the_permalink( $post );
 			$terms[ $id ]['excerpt'] = $post->post_excerpt;
 			$terms[ $id ]['syonyms'] = $syonyms;
