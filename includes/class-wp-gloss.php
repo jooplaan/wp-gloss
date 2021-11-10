@@ -121,6 +121,11 @@ class Wp_Gloss {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-gloss-meta-boxes.php';
 
 		/**
+		 * The class responsible for DOM manipulation.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/simple_html_dom.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-wp-gloss-admin.php';
