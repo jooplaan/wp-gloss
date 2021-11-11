@@ -28,6 +28,8 @@ How to install the plugin and get it working.
 
 == TO DO ==
 
-* Replace simple preg_replace with DOM parser
+* Replace simple preg_replace with DOM parser in tooltips display
 * Improve touch device UX for tooltips
+* Add general configuration options
+* Add configuration options per page/post
 
