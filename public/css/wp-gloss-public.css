@@ -42,3 +42,16 @@
 	font-weight: normal;
 	margin: 3rem auto 1rem auto;
 }
+
+.wp-gloss-list-alphabet {
+	display: flex;
+	overflow-wrap: break-word;
+	max-width: 800px;
+}
+.wp-gloss-list-alphabet li {
+	height: 30px;
+	width: 30px;
+	border-right: 1px solid #e2e3e4;
+	line-height: 0;
+	text-align: center;
+}
