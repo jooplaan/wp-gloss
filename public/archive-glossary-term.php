@@ -9,21 +9,8 @@
  * @since 1.0.0
  */
 
-get_header();
-
-global $wp_query;
-
-$mypost = array(
-	'post_type' => 'glossary-term',
-	'nopaging' => true,
-	'posts_per_page' => -1,
-	'order' => 'ASC',
-	'orderby' => 'title',
-);
-
-
 /**
- * Method to check if we have content for a char..
+ * Method to check if we have content for a given char.
  *
  * @since        1.0.0
  * @param string $char       The alphabet char.
@@ -37,6 +24,16 @@ function wp_gloss_have_content_with_char( $char, $items ) {
 	}
 	return false;
 }
+
+get_header();
+
+$mypost = array(
+	'post_type' => 'glossary-term',
+	'nopaging' => true,
+	'posts_per_page' => -1,
+	'order' => 'ASC',
+	'orderby' => 'title',
+);
 // Get the program post for the loop.
 $loop = new WP_Query( $mypost );
 ?>
@@ -51,7 +48,7 @@ $loop = new WP_Query( $mypost );
 
 	</header><!-- .archive-header -->
 
-	<div class="post-inner  ">
+	<div class="post-inner">
 
 		<div class="entry-content">
 	<?php
@@ -68,9 +65,9 @@ $loop = new WP_Query( $mypost );
 		$index_arr[ $char ][ $term_id ]['post_content'] = $item->post_content;
 		$index_arr[ $char ][ $term_id ]['link'] = get_the_permalink( $item );
 	}
-	$alphabeth = range( 'A', 'Z' );
 
 	// Loop through the alphabet to display the menu.
+	$alphabeth = range( 'A', 'Z' );
 	echo '<ul class="wp-gloss-list wp-gloss-list-alphabet reset-list-style">';
 	foreach ( range( 'A', 'Z' ) as $v ) {
 		echo '<li>';
@@ -96,11 +93,9 @@ $loop = new WP_Query( $mypost );
 	}
 	?>
 
-</div>
-</div>
+		</div><!-- .entry-content -->
+	</div><!-- .post-inner -->
 </main><!-- #site-content -->
-
-<?php get_template_part( 'template-parts/footer-menus-widgets' ); ?>
 
 <?php
 get_footer();
