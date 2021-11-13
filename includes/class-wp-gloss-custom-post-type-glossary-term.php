@@ -95,19 +95,19 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 
 					// Admin.
 					'capability_type' => 'post',
-					'menu_icon'     => 'dashicons-book-alt',
-					'menu_position' => 6,
-					'query_var'     => true,
-					'show_in_menu'  => true,
-					'show_ui'       => true,
-					'supports'      => array(
+					'menu_icon'       => 'dashicons-book-alt',
+					'menu_position'   => 6,
+					'query_var'       => true,
+					'show_in_menu'    => true,
+					'show_ui'         => true,
+					'supports'        => array(
 						'title',
 						'editor',
 						'excerpt',
 						'thumbnail',
 					),
 					'show_in_rest' => false,
-					'taxonomies' => array( 'category-glossary' ),
+					'taxonomies'   => array( 'category-glossary' ),
 				)
 			);
 		}
@@ -118,17 +118,17 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 		 */
 		public function create_wp_gloss_hierarchical_taxonomy() {
 			$labels = array(
-				'name' => _x( 'Glossary categories', 'taxonomy general name', 'wp-gloss' ),
-				'singular_name' => _x( 'Glossary category', 'taxonomy singular name', 'wp-gloss' ),
-				'search_items' => __( 'Search Glossary categories', 'wp-gloss' ),
-				'all_items' => __( 'All Glossary categories', 'wp-gloss' ),
-				'parent_item' => __( 'Parent Glossary category', 'wp-gloss' ),
+				'name'              => _x( 'Glossary categories', 'taxonomy general name', 'wp-gloss' ),
+				'singular_name'     => _x( 'Glossary category', 'taxonomy singular name', 'wp-gloss' ),
+				'search_items'      => __( 'Search Glossary categories', 'wp-gloss' ),
+				'all_items'         => __( 'All Glossary categories', 'wp-gloss' ),
+				'parent_item'       => __( 'Parent Glossary category', 'wp-gloss' ),
 				'parent_item_colon' => __( 'Parent Glossary category:', 'wp-gloss' ),
-				'edit_item' => __( 'Edit Glossary category', 'wp-gloss' ),
-				'update_item' => __( 'Update Glossary category', 'wp-gloss' ),
-				'add_new_item' => __( 'Add New Glossary category', 'wp-gloss' ),
-				'new_item_name' => __( 'New Glossary category Name', 'wp-gloss' ),
-				'menu_name' => __( 'Glossary categories', 'wp-gloss' ),
+				'edit_item'         => __( 'Edit Glossary category', 'wp-gloss' ),
+				'update_item'       => __( 'Update Glossary category', 'wp-gloss' ),
+				'add_new_item'      => __( 'Add New Glossary category', 'wp-gloss' ),
+				'new_item_name'     => __( 'New Glossary category Name', 'wp-gloss' ),
+				'menu_name'         => __( 'Glossary categories', 'wp-gloss' ),
 			);
 
 			// Now register the taxonomy.
@@ -136,12 +136,12 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 				'category-glossary',
 				array( 'glossary-term' ),
 				array(
-					'hierarchical' => true,
-					'labels' => $labels,
-					'show_ui' => true,
+					'hierarchical'      => true,
+					'labels'            => $labels,
+					'show_ui'           => true,
 					'show_admin_column' => true,
-					'query_var' => true,
-					'rewrite' => array( 'slug' => 'glossary-terms' ),
+					'query_var'         => true,
+					'rewrite'           => array( 'slug' => 'glossary-terms' ),
 				)
 			);
 		}
@@ -156,14 +156,16 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 				if ( is_single() ) {
 					// Checks if the file exists in the theme first,
 					// otherwise serve the file from the plugin.
-					if ( $theme_file = locate_template( array( 'single-glossary-term.php' ) ) ) {
+					$theme_file = locate_template( array( 'single-glossary-term.php' ) );
+					if ( $theme_file ) {
 						$template_path = $theme_file;
 					} else {
 						$template_path = WP_GLOSS_PLUGIN_PATH . 'public/single-glossary-term.php';
 					}
 				} elseif ( ! is_search() ) {
 					// Listing page.
-					if ( $theme_file = locate_template( array( 'archive-glossary-term.php' ) ) ) {
+					$theme_file = locate_template( array( 'archive-glossary-term.php' ) );
+					if ( $theme_file ) {
 						$template_path = $theme_file;
 					} else {
 						$template_path = WP_GLOSS_PLUGIN_PATH . 'public/archive-glossary-term.php';

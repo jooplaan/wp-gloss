@@ -57,10 +57,10 @@ if ( ! class_exists( 'Wp_Gloss_Meta_Boxes' ) ) {
 		 */
 		public function render_meta_boxes( $post ) {
 
-			$meta = get_post_custom( $post->ID );
-			$wp_gloss_synonym = ! isset( $meta['wp-gloss-synonym'][0] ) ? '' : $meta['wp-gloss-synonym'][0];
-			$wp_gloss_sensitivity = ! isset( $meta['wp-gloss-sensitivity'][0] ) ? 0 : $meta['wp-gloss-sensitivity'][0];
-			$wp_gloss_term_preferred = ! isset( $meta['wp-gloss-term-preferred'][0] ) ? 0 : $meta['wp-gloss-term-preferred'][0];
+			$meta                        = get_post_custom( $post->ID );
+			$wp_gloss_synonym            = ! isset( $meta['wp-gloss-synonym'][0] ) ? '' : $meta['wp-gloss-synonym'][0];
+			$wp_gloss_sensitivity        = ! isset( $meta['wp-gloss-sensitivity'][0] ) ? 0 : $meta['wp-gloss-sensitivity'][0];
+			$wp_gloss_term_preferred     = ! isset( $meta['wp-gloss-term-preferred'][0] ) ? 0 : $meta['wp-gloss-term-preferred'][0];
 			$wp_gloss_term_non_preferred = ! isset( $meta['wp-gloss-term-non-preferred'][0] ) ? 0 : $meta['wp-gloss-term-non-preferred'][0];
 
 			wp_nonce_field( basename( __FILE__ ), 'glossary-term-meta-nonce' );
@@ -200,9 +200,9 @@ if ( ! class_exists( 'Wp_Gloss_Meta_Boxes' ) ) {
 			}
 
 			// Get the values from the $_POST object.
-			$meta['wp-gloss-synonym'] = ( isset( $_POST['wp-gloss-synonym'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-synonym'] ) ) : '' );
-			$meta['wp-gloss-sensitivity'] = ( isset( $_POST['wp-gloss-sensitivity'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-sensitivity'] ) ) : '' );
-			$meta['wp-gloss-term-preferred'] = ( isset( $_POST['wp-gloss-term-preferred'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-term-preferred'] ) ) : '' );
+			$meta['wp-gloss-synonym']            = ( isset( $_POST['wp-gloss-synonym'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-synonym'] ) ) : '' );
+			$meta['wp-gloss-sensitivity']        = ( isset( $_POST['wp-gloss-sensitivity'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-sensitivity'] ) ) : '' );
+			$meta['wp-gloss-term-preferred']     = ( isset( $_POST['wp-gloss-term-preferred'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-term-preferred'] ) ) : '' );
 			$meta['wp-gloss-term-non-preferred'] = ( isset( $_POST['wp-gloss-term-non-preferred'] ) ? sanitize_text_field( wp_unslash( $_POST['wp-gloss-term-non-preferred'] ) ) : '' );
 
 			foreach ( $meta as $key => $value ) {

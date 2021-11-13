@@ -28,11 +28,11 @@ function wp_gloss_have_content_with_char( $char, $items ) {
 get_header();
 
 $mypost = array(
-	'post_type' => 'glossary-term',
-	'nopaging' => true,
+	'post_type'      => 'glossary-term',
+	'nopaging'       => true,
 	'posts_per_page' => -1,
-	'order' => 'ASC',
-	'orderby' => 'title',
+	'order'          => 'ASC',
+	'orderby'        => 'title',
 );
 // Get the program post for the loop.
 $loop = new WP_Query( $mypost );
@@ -52,18 +52,18 @@ $loop = new WP_Query( $mypost );
 
 		<div class="entry-content">
 	<?php
-	$items = $loop->posts;
+	$items     = $loop->posts;
 	$index_arr = array();
 
 	// Build the Alphabet navigation anchors.
 	foreach ( $items as $key => $item ) {
-		$char = strtoupper( mb_substr( $item->post_title, 0, 1, 'UTF-8' ) );
-		$term_id = $item->ID;
+		$char                                    = strtoupper( mb_substr( $item->post_title, 0, 1, 'UTF-8' ) );
+		$term_id                                 = $item->ID;
 		$index_arr[ $char ][ $term_id ]['title'] = $item->post_title;
-		$index_arr[ $char ][ $term_id ]['id'] = $item->ID;
+		$index_arr[ $char ][ $term_id ]['id']    = $item->ID;
 		$index_arr[ $char ][ $term_id ]['post_excerpt'] = $item->post_excerpt;
 		$index_arr[ $char ][ $term_id ]['post_content'] = $item->post_content;
-		$index_arr[ $char ][ $term_id ]['link'] = get_the_permalink( $item );
+		$index_arr[ $char ][ $term_id ]['link']         = get_the_permalink( $item );
 	}
 
 	// Loop through the alphabet to display the menu.
