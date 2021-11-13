@@ -124,24 +124,14 @@ class Wp_Gloss_Public {
 	private function create_tooltip( $content, $key, $term ) {
 		$html = new simple_html_dom( $content );
 		$html->load( $content );
-
 		foreach ( $html->find( 'p' ) as $p ) {
-			// Only show a tooltip once on a page.
-			if ( ! array_key_exists( $term['term_id'], $this->terms_used ) ) {
-				$p->innertext = $this->preg_replace_filter( $p->innertext, $key, $term );
-			}
+			$p->innertext = $this->preg_replace_filter( $p->innertext, $key, $term );
 		}
 		foreach ( $html->find( 'li' ) as $li ) {
-			// Only show a tooltip once on a page.
-			if ( ! array_key_exists( $term['term_id'], $this->terms_used ) ) {
-				$li->innertext = $this->preg_replace_filter( $li->innertext, $key, $term );
-			}
+			$li->innertext = $this->preg_replace_filter( $li->innertext, $key, $term );
 		}
 		foreach ( $html->find( 'td' ) as $td ) {
-			// Only show a tooltip once on a page.
-			if ( ! array_key_exists( $term['term_id'], $this->terms_used ) ) {
-				$td->innertext = $this->preg_replace_filter( $td->innertext, $key, $term );
-			}
+			$td->innertext = $this->preg_replace_filter( $td->innertext, $key, $term );
 		}
 		return $html;
 	}
@@ -156,30 +146,32 @@ class Wp_Gloss_Public {
 	 * @param array  $term      Array with the term data.
 	 */
 	private function preg_replace_filter( $content, $key, $term ) {
-		$this->term = $term;
-		// Regex to search in html, skipping the found HTML tags.
-		// See https://regex101.com/r/sF4tP4/1 for what inspired this solution.
-		$pattern    = "~<[^>]*>(*SKIP)(*F)|\b$key\b~i";
-		$html       = preg_replace_callback(
-			$pattern,
-			function( $match ) {
-				$replacement  = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
-				$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
+		// Check if we didn't already add this term to the content.
+		if ( ! array_key_exists( $this->term['term_id'], $this->terms_used ) ) {
+			// Regex to search in html, skipping the found HTML tags.
+			// See https://regex101.com/r/sF4tP4/1 for what inspired this solution.
+			$pattern    = "~<[^>]*>(*SKIP)(*F)|\b$key\b~i";
+			$this->term = $term;
+			$html       = preg_replace_callback(
+				$pattern,
+				function( $match ) {
+					$replacement  = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
+					$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
 
-				// Store found term to allow only one tooltip per term per page.
-				if ( $match ) {
-					$post_id = $this->term['term_id'];
-					$this->terms_used[ $post_id ] = $post_id;
-				}
-				return $replacement;
-			},
-			$content,
-			1
-		);
-		return $html;
+					// Store found term to allow only one tooltip per term per page.
+					if ( $match ) {
+						$post_id = $this->term['term_id'];
+						$this->terms_used[ $post_id ] = $post_id;
+					}
+					return $replacement;
+				},
+				$content,
+				1
+			);
+			return $html;
+		}
+		return $content;
 	}
-
-
 
 	/**
 	 * Get ordered term list.
