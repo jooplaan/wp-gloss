@@ -84,10 +84,11 @@ class Wp_Gloss_Public {
 			$terms   = $this->get_ordered_term_list();
 			$post_id = get_the_ID();
 			foreach ( $terms as $key => $term ) {
+				$this->term = $term;
 				// Don't link content to itself.
 				if ( $post_id !== $term['term_id'] ) {
 					// Make the tooltip.
-					$content = $this->create_tooltip( $content, $key, $term );
+					$content = $this->create_tooltip( $content, $key );
 				}
 			}
 		}
@@ -119,10 +120,8 @@ class Wp_Gloss_Public {
 	 *
 	 * @param string $content   The content.
 	 * @param string $key       The term label.
-	 * @param array  $term      Array with the term data.
 	 */
-	private function create_tooltip( $content, $key, $term ) {
-		$this->term = $term;
+	private function create_tooltip( $content, $key ) {
 		$html = new simple_html_dom( $content );
 		$html->load( $content );
 		foreach ( $html->find( 'p' ) as $p ) {
@@ -148,7 +147,7 @@ class Wp_Gloss_Public {
 	private function preg_replace_filter( $content, $key ) {
 		// Check if we didn't already add this term to the content.
 		if ( ! array_key_exists( $this->term['term_id'], $this->terms_used ) ) {
-			// Regex to search in html, skipping the found HTML tags.
+			// Regex to search in html, skipping HTML tags.
 			// See https://regex101.com/r/sF4tP4/1 for what inspired this solution.
 			$pattern    = "~<[^>]*>(*SKIP)(*F)|\b$key\b~i";
 			$html       = preg_replace_callback(
