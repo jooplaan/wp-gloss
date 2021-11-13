@@ -14,7 +14,8 @@
 }
 
 @media (hover: hover) {
-	/* Mouse enables devices. Display the link as tooltip only when hover is available. */
+	/* Mouse enabled devices.
+	Display the link as tooltip only when hover is available. */
 	.wp-gloss-tooltip-wrapper {
 		position: relative;
 		display: inline;
