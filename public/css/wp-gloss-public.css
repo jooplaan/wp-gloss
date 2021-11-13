@@ -3,55 +3,66 @@
  * included in this file.
  */
 
-.wp-gloss-tooltip-wrapper {
-	position: relative;
-	display: inline;
-	text-decoration: none !important;
-	border-bottom: dotted 3px #000000 !important;
-	color: #000000 !important;
-}
-
 .wp-gloss-tooltip {
-	position: absolute;
-	z-index: 100;
 	display: none;
-	left: 50%;
-	bottom: 0;
-	transform: translate(-50%, calc(100% + 10px));
-	padding: 6px calc(10px + 1rem) 6px 10px;
-	border-radius: 4px;
-	background: rgba(0, 0, 0, 0.9);
-	color: #fff;
-	width: 28vw;
-	font-size: 1.8rem;
-	font-weight: normal;
 }
 
-.wp-gloss-tooltip::before {
-	content: "";
-	position: absolute;
-	top: -10px;
-	left: calc(50% - 10px);
-	border-bottom: 10px solid rgba(0, 0, 0, 0.9);
-	border-left: 10px solid transparent;
-	border-right: 10px solid transparent;
+/** Display the link as tooltip only when hover is available. */
+@media (hover: hover) {
+	.wp-gloss-tooltip-wrapper {
+		position: relative;
+		display: inline;
+		text-decoration: none !important;
+		border-bottom: dotted 3px #000000 !important;
+		color: #000000 !important;
+	}
+
+	.wp-gloss-tooltip {
+		position: absolute;
+		z-index: 100;
+		display: none;
+		left: 50%;
+		bottom: 0;
+		transform: translate(-50%, calc(100% + 10px));
+		padding: 6px calc(10px + 1rem) 6px 10px;
+		border-radius: 4px;
+		background: rgba(0, 0, 0, 0.9);
+		color: #fff;
+		width: 28vw;
+		font-size: 1.8rem;
+		font-weight: normal;
+	}
+
+	.wp-gloss-tooltip::before {
+		content: "";
+		position: absolute;
+		top: -10px;
+		left: calc(50% - 10px);
+		border-bottom: 10px solid rgba(0, 0, 0, 0.9);
+		border-left: 10px solid transparent;
+		border-right: 10px solid transparent;
+	}
+
+	.entry-title.heading-size-4 {
+		font-size: 3.4rem;
+		font-weight: normal;
+		margin: 3rem auto 1rem auto;
+	}
+
+	.wp-gloss-list-alphabet {
+		display: flex;
+		overflow-wrap: break-word;
+		max-width: 800px;
+	}
+
+	.wp-gloss-list-alphabet li {
+		height: 30px;
+		width: 30px;
+		border-right: 1px solid #e2e3e4;
+		line-height: 0;
+		text-align: center;
+	}
+
 }
 
-.entry-title.heading-size-4 {
-	font-size: 3.4rem;
-	font-weight: normal;
-	margin: 3rem auto 1rem auto;
-}
 
-.wp-gloss-list-alphabet {
-	display: flex;
-	overflow-wrap: break-word;
-	max-width: 800px;
-}
-.wp-gloss-list-alphabet li {
-	height: 30px;
-	width: 30px;
-	border-right: 1px solid #e2e3e4;
-	line-height: 0;
-	text-align: center;
-}
