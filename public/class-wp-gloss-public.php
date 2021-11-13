@@ -122,16 +122,17 @@ class Wp_Gloss_Public {
 	 * @param array  $term      Array with the term data.
 	 */
 	private function create_tooltip( $content, $key, $term ) {
+		$this->term = $term;
 		$html = new simple_html_dom( $content );
 		$html->load( $content );
 		foreach ( $html->find( 'p' ) as $p ) {
-			$p->innertext = $this->preg_replace_filter( $p->innertext, $key, $term );
+			$p->innertext = $this->preg_replace_filter( $p->innertext, $key );
 		}
 		foreach ( $html->find( 'li' ) as $li ) {
-			$li->innertext = $this->preg_replace_filter( $li->innertext, $key, $term );
+			$li->innertext = $this->preg_replace_filter( $li->innertext, $key );
 		}
 		foreach ( $html->find( 'td' ) as $td ) {
-			$td->innertext = $this->preg_replace_filter( $td->innertext, $key, $term );
+			$td->innertext = $this->preg_replace_filter( $td->innertext, $key );
 		}
 		return $html;
 	}
@@ -143,10 +144,8 @@ class Wp_Gloss_Public {
 	 *
 	 * @param string $content   The content.
 	 * @param string $key       The term label.
-	 * @param array  $term      Array with the term data.
 	 */
-	private function preg_replace_filter( $content, $key, $term ) {
-		$this->term = $term;
+	private function preg_replace_filter( $content, $key ) {
 		// Check if we didn't already add this term to the content.
 		if ( ! array_key_exists( $this->term['term_id'], $this->terms_used ) ) {
 			// Regex to search in html, skipping the found HTML tags.
