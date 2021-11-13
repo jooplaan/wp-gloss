@@ -7,7 +7,7 @@
 	$(function() {
 		var mobile = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
 		// Show tooltip only if device is not mobile.
-		if ( mobile === false ) {
+		if( mobile === false) {
 			// Show tooltip on hover.
 			$('.wp-gloss-tooltip-wrapper').hover(
 				function () {
