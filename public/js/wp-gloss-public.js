@@ -25,7 +25,7 @@
 				$(this).find($('.wp-gloss-tooltip')).show();
 				$(this).find($('.wp-gloss-tooltip')).attr("aria-hidden", "false");
 			});
-			// Show tooltip on blur/no focus.
+			// Hide tooltip on blur/no focus.
 			$('.wp-gloss-tooltip-wrapper').bind('blur', function() {
 				$(this).find($('.wp-gloss-tooltip')).hide();
 				$(this).find($('.wp-gloss-tooltip')).attr("aria-hidden", "true");
