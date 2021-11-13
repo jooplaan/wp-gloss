@@ -49,6 +49,15 @@ class Wp_Gloss_Public {
 	private $term;
 
 	/**
+	 * Therms uses.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $terms_used    Array of terms used in content.
+	 */
+	private $terms_used;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -60,31 +69,26 @@ class Wp_Gloss_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->term        = '';
+		$this->terms_used  = array();
 	}
 
 	/**
 	 * Main method to add the tooltips to the content.
+	 * See https://developer.wordpress.org/reference/hooks/the_content/
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 * @param string $content       The post content.
 	 */
 	public function add_tooltips_to_content( $content ) {
 		if ( ( is_singular() ) && ( is_main_query() ) ) {
-			$terms = $this->get_ordered_term_list();
-
+			$terms   = $this->get_ordered_term_list();
+			$post_id = get_the_ID();
 			foreach ( $terms as $key => $term ) {
-				$this->term = $term;
-				$pattern    = "/\b$key\b/i";
-				$content    = preg_replace_callback(
-					$pattern,
-					function( $match ) {
-						$replacement  = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
-						$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
-						return $replacement;
-					},
-					$content,
-					1
-				);
+				// Don't link content to itself.
+				if ( $post_id !== $term['term_id'] ) {
+					// Make the tooltip.
+					$content = $this->create_tooltip( $content, $key, $term );
+				}
 			}
 		}
 		return $content;
@@ -96,21 +100,7 @@ class Wp_Gloss_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Wp_Gloss_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Wp_Gloss_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-gloss-public.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -119,22 +109,77 @@ class Wp_Gloss_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Wp_Gloss_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Wp_Gloss_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-gloss-public.js', array( 'jquery' ), $this->version, false );
-
 	}
+
+	/**
+	 * Create tooltip.
+	 *
+	 * @since    1.0.0
+	 *
+	 * @param string $content   The content.
+	 * @param string $key       The term label.
+	 * @param array  $term      Array with the term data.
+	 */
+	private function create_tooltip( $content, $key, $term ) {
+		$html = new simple_html_dom( $content );
+		$html->load( $content );
+
+		foreach ( $html->find( 'p' ) as $p ) {
+			// Only show a tooltip once on a page.
+			if ( ! array_key_exists( $term['term_id'], $this->terms_used ) ) {
+				$p->innertext = $this->preg_replace_filter( $p->innertext, $key, $term );
+			}
+		}
+		foreach ( $html->find( 'li' ) as $li ) {
+			// Only show a tooltip once on a page.
+			if ( ! array_key_exists( $term['term_id'], $this->terms_used ) ) {
+				$li->innertext = $this->preg_replace_filter( $li->innertext, $key, $term );
+			}
+		}
+		foreach ( $html->find( 'td' ) as $td ) {
+			// Only show a tooltip once on a page.
+			if ( ! array_key_exists( $term['term_id'], $this->terms_used ) ) {
+				$td->innertext = $this->preg_replace_filter( $td->innertext, $key, $term );
+			}
+		}
+		return $html;
+	}
+
+	/**
+	 * The regular expression to replace the word with a tooltip in the content.
+	 *
+	 * @since    1.0.0
+	 *
+	 * @param string $content   The content.
+	 * @param string $key       The term label.
+	 * @param array  $term      Array with the term data.
+	 */
+	private function preg_replace_filter( $content, $key, $term ) {
+		$this->term = $term;
+		// Regex to search in html, skipping the found HTML tags.
+		// See https://regex101.com/r/sF4tP4/1 for what inspired this solution.
+		$pattern    = "~<[^>]*>(*SKIP)(*F)|\b$key\b~i";
+		$html       = preg_replace_callback(
+			$pattern,
+			function( $match ) {
+				$replacement  = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
+				$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
+
+				// Store found term to allow only one tooltip per term per page.
+				if ( $match ) {
+					$post_id = $this->term['term_id'];
+					$this->terms_used[ $post_id ] = $post_id;
+				}
+				return $replacement;
+			},
+			$content,
+			1
+		);
+		return $html;
+	}
+
+
 
 	/**
 	 * Get ordered term list.
@@ -148,12 +193,14 @@ class Wp_Gloss_Public {
 		if ( count( $terms ) > 0 ) {
 			foreach ( $terms as $term ) {
 				$term_key                          = $term['term'];
+				$term_id                           = $term['id'];
 				$id                                = mt_getrandmax();
 				$terms_arr[ $term_key ]['id']      = mt_getrandmax();
 				$terms_arr[ $term_key ]['term']    = $term_key;
 				$terms_arr[ $term_key ]['link']    = $term['link'];
 				$terms_arr[ $term_key ]['excerpt'] = $term['excerpt'];
 				$terms_arr[ $term_key ]['syonyms'] = $term['syonyms'];
+				$terms_arr[ $term_key ]['term_id'] = $term_id;
 				// Get the synonyms to.
 				if ( count( $term['syonyms'] ) > 0 ) {
 					foreach ( $term['syonyms'] as $synonym ) {
@@ -161,6 +208,7 @@ class Wp_Gloss_Public {
 						$synonyms_arr[ $synonym ]['term']    = $term_key;
 						$synonyms_arr[ $synonym ]['link']    = $term['link'];
 						$synonyms_arr[ $synonym ]['excerpt'] = $term['excerpt'];
+						$synonyms_arr[ $synonym ]['term_id'] = $term_id;
 					}
 				}
 			}
