@@ -146,12 +146,12 @@ class Wp_Gloss_Public {
 	 * @param array  $term      Array with the term data.
 	 */
 	private function preg_replace_filter( $content, $key, $term ) {
+		$this->term = $term;
 		// Check if we didn't already add this term to the content.
 		if ( ! array_key_exists( $this->term['term_id'], $this->terms_used ) ) {
 			// Regex to search in html, skipping the found HTML tags.
 			// See https://regex101.com/r/sF4tP4/1 for what inspired this solution.
 			$pattern    = "~<[^>]*>(*SKIP)(*F)|\b$key\b~i";
-			$this->term = $term;
 			$html       = preg_replace_callback(
 				$pattern,
 				function( $match ) {
