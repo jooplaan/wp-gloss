@@ -20,7 +20,6 @@
  * @author     Joop Laan <wp-gloss@interconnecting.systems>
  */
 class Wp_Gloss_Public {
-
 	/**
 	 * The ID of this plugin.
 	 *
@@ -169,9 +168,9 @@ class Wp_Gloss_Public {
 			$pattern    = "~<[^>]*>(*SKIP)(*F)|\b$key\b~i";
 			$html       = preg_replace_callback(
 				$pattern,
-				function( $match ) {
+				function ( $match ) {
 					// Store found term to allow only one tooltip per term per page.
-					$term_id = $this->term['term_id'];
+					$term_id                      = $this->term['term_id'];
 					$this->terms_used[ $term_id ] = $this->term['term'];
 
 					// Return span with encoded tooltip link.
