@@ -218,7 +218,7 @@ class Wp_Gloss_Public {
 	 * @param string $string       The string.
 	 */
 	private function decode( $string ) {
-		return base64_decode( str_pad( strtr( $string, '-_', '+/' ), strlen( $string ) % 4, '=', STR_PAD_RIGHT ) );
+		return base64_decode( strtr( $string, '-_', '+/' ) . str_repeat( '=', 3 - ( 3 + strlen( $string ) ) % 4 ) );
 	}
 
 	/**
