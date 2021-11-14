@@ -11,10 +11,11 @@ How to install the plugin and get it working.
 
 ## Changelog
 
-= 1.0 =
+### 1.0
+
 * Initial release
 
-== TO DO ==
+## TO DO
 
 * Make tooltip work on touch devices
 * Add general configuration options
