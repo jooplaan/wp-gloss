@@ -1,4 +1,4 @@
-# wp-gloss
+# Glossarium
 
 A glossary plugin, providing glossary terms, a glossary overview page, and a content filter to create tooltips with the glossary terms.
 
@@ -6,8 +6,8 @@ A glossary plugin, providing glossary terms, a glossary overview page, and a con
 
 How to install the plugin and get it working.
 
-# Upload `wp-gloss.php` to the `/wp-content/plugins/` directory
-# Activate the plugin through the 'Plugins' menu in WordPress
+* Upload `wp-gloss.php` to the `/wp-content/plugins/` directory
+* Activate the plugin through the 'Plugins' menu in WordPress
 
 ## Changelog
 
