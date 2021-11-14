@@ -44,7 +44,7 @@ class Wp_Gloss_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $term    The current tern.
+	 * @var      array    $term    The current term.
 	 */
 	private $term;
 
@@ -65,11 +65,28 @@ class Wp_Gloss_Public {
 	 * @param string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-		$this->term        = '';
+		$this->term        = array();
 		$this->terms_used  = array();
+	}
+
+	/**
+	 * Register the stylesheets for the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_styles() {
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-gloss-public.css', array(), $this->version, 'all' );
+	}
+
+	/**
+	 * Register the JavaScript for the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-gloss-public.js', array( 'jquery' ), $this->version, false );
 	}
 
 	/**
@@ -91,26 +108,25 @@ class Wp_Gloss_Public {
 					$content = $this->create_tooltip( $content, $key );
 				}
 			}
+			return $this->decode_tooltips_in_content( $content );
 		}
 		return $content;
 	}
 
 	/**
-	 * Register the stylesheets for the public-facing side of the site.
+	 * Decode the encoded tooltips.
 	 *
 	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-gloss-public.css', array(), $this->version, 'all' );
-	}
-
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
 	 *
-	 * @since    1.0.0
+	 * @param string $content   The content.
 	 */
-	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-gloss-public.js', array( 'jquery' ), $this->version, false );
+	private function decode_tooltips_in_content( $content ) {
+		$html = new simple_html_dom( $content );
+		$html->load( $content );
+		foreach ( $html->find( 'span[class="wp-gloss-tooltip-wrap-code"]' ) as $sp ) {
+			$sp->innertext = $this->decode( $sp->innertext );
+		}
+		return $html;
 	}
 
 	/**
@@ -136,6 +152,7 @@ class Wp_Gloss_Public {
 		return $html;
 	}
 
+
 	/**
 	 * The regular expression to replace the word with a tooltip in the content.
 	 *
@@ -153,15 +170,12 @@ class Wp_Gloss_Public {
 			$html       = preg_replace_callback(
 				$pattern,
 				function( $match ) {
-					$replacement  = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
-					$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
-
 					// Store found term to allow only one tooltip per term per page.
-					if ( $match ) {
-						$post_id = $this->term['term_id'];
-						$this->terms_used[ $post_id ] = $post_id;
-					}
-					return $replacement;
+					$term_id = $this->term['term_id'];
+					$this->terms_used[ $term_id ] = $this->term['term'];
+
+					// Return span with encoded tooltip link.
+					return $this->create_the_tooltip_code( $match );
 				},
 				$content,
 				1
@@ -169,6 +183,43 @@ class Wp_Gloss_Public {
 			return $html;
 		}
 		return $content;
+	}
+
+	/**
+	 * Make span with encoded tooltip link.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $match       The match array.
+	 */
+	private function create_the_tooltip_code( $match ) {
+		$replacement  = '<a href="' . $this->term['link'] . '" aria-labelledby="tip-' . $this->term['id'] . '" class="wp-gloss-tooltip-wrapper wp-gloss-tooltip-trigger">';
+		$replacement .= $match[0] . '<span aria-hidden="true" class="wp-gloss-tooltip" id="tip-' . $this->term['id'] . '"><strong>' . $this->term['term'] . '</strong><br>' . $this->term['excerpt'] . '</span></a>';
+
+		// Encode the link, to avoid creating tooltips inside this tooltip.
+		return '<span class="wp-gloss-tooltip-wrap-code">' . $this->encode( $replacement ) . '</span>';
+	}
+
+	/**
+	 * Encode a string.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $string       The string.
+	 */
+	private function encode( $string ) {
+		return rtrim( strtr( base64_encode( $string ), '+/', '-_' ), '=' );
+	}
+
+	/**
+	 * Decode a string.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $string       The string.
+	 */
+	private function decode( $string ) {
+		return base64_decode( str_pad( strtr( $string, '-_', '+/' ), strlen( $string ) % 4, '=', STR_PAD_RIGHT ) );
 	}
 
 	/**
