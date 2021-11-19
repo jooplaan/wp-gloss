@@ -1,0 +1,16 @@
+{
+  "name": "jooplaan/wp-gloss",
+  "description": "A glossary plugin, providing glossary terms, a glossary overview page, and a content filter to create tooltips with the glossary terms.. ",
+  "keywords": ["wordpress", "plugin"],
+  "homepage": "https://github.com/jooplaan/wp-gloss/",
+  "authors": [
+    {
+      "name": "Joop Laan",
+      "homepage": "https://github.com/jooplaan/"
+    }
+  ],
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=5.6"
+  }
+}
