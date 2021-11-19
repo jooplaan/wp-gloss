@@ -52,11 +52,15 @@ if ( ! class_exists( 'Wp_Gloss_Custom_Post_Type_Glossary_Term' ) ) {
 
 		}
 
-
 		/**
 		 * Add Glossary Terms to WP search.
+		 *
+		 * @since      1.0.1
+		 *
+		 * @param instance $query  The WP_Query instance passed by reference..
+		 * See: https://developer.wordpress.org/reference/hooks/pre_get_posts/.
 		 */
-		public function wp_gloss_search() {
+		public function wp_gloss_search( $query ) {
 			if ( $query->is_search ) {
 				$query->set( 'post_type', array( 'post', 'glossary-term', 'page' ) );
 			};
