@@ -15,7 +15,7 @@
  * Plugin Name:       Glossarium
  * Plugin URI:        https://github.com/jooplaan/wp-gloss
  * Description:       Build a glossary with preferred and non-preferred terms in a specialized field of knowledge.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            Joop Laan
  * Author URI:        https://www.jooplaan.com/
  * License:           GPL-2.0+

@@ -69,7 +69,7 @@ class Wp_Gloss {
 		if ( defined( 'WP_GLOSS_VERSION' ) ) {
 			$this->version = WP_GLOSS_VERSION;
 		} else {
-			$this->version = '1.0.0';
+			$this->version = '1.0.4';
 		}
 		$this->plugin_name = 'wp-gloss';
 
