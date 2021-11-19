@@ -49,27 +49,24 @@
 		border-left: 10px solid transparent;
 		border-right: 10px solid transparent;
 	}
-
-	.entry-title.heading-size-4 {
-		font-size: 3.4rem;
-		font-weight: normal;
-		margin: 3rem auto 1rem auto;
-	}
-
-	.wp-gloss-list-alphabet {
-		display: flex;
-		overflow-wrap: break-word;
-		max-width: 800px;
-	}
-
-	.wp-gloss-list-alphabet li {
-		height: 30px;
-		width: 30px;
-		border-right: 1px solid #e2e3e4;
-		line-height: 0;
-		text-align: center;
-	}
-
 }
 
+.entry-title.heading-size-4 {
+	font-size: 3.4rem;
+	font-weight: normal;
+	margin: 3rem auto 1rem auto;
+}
 
+.wp-gloss-list-alphabet {
+	display: flex;
+	overflow-wrap: break-word;
+	max-width: 800px;
+	list-style: none;
+}
+.wp-gloss-list-alphabet li {
+	height: 30px;
+	width: 30px;
+	border-right: 1px solid #e2e3e4;
+	line-height: 0;
+	text-align: center;
+}
